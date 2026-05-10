@@ -1,11 +1,19 @@
 import crypto from "crypto";
 
 const ALGORITHM = "aes-256-gcm";
-const KEY = Buffer.from(process.env.ENCRYPTION_KEY!, "hex");
 const IV_LENGTH = 12;
 const TAG_LENGTH = 16;
 
+function getKey(): Buffer {
+  const key = process.env.ENCRYPTION_KEY;
+  if (!key) {
+    throw new Error("Please define the ENCRYPTION_KEY environment variable");
+  }
+  return Buffer.from(key, "hex");
+}
+
 export function encrypt(plaintext: string): string {
+  const KEY = getKey();
   const iv = crypto.randomBytes(IV_LENGTH);
   const cipher = crypto.createCipheriv(ALGORITHM, KEY, iv);
   const encrypted = Buffer.concat([
@@ -18,6 +26,7 @@ export function encrypt(plaintext: string): string {
 }
 
 export function decrypt(ciphertext: string): string {
+  const KEY = getKey();
   const parts = ciphertext.split(":");
   if (parts.length !== 3) throw new Error("Invalid ciphertext format");
   const [ivHex, tagHex, encryptedHex] = parts;
