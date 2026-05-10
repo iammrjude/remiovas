@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Plus, Copy, CheckCircle, QrCode, ExternalLink, Loader2, FileText, Clock } from "lucide-react";
 import QRCode from "qrcode";
 
@@ -56,20 +57,20 @@ export default function RequestsPage() {
   const [statusFilter, setStatusFilter] = useState("");
 
   useEffect(() => {
+    const loadRequests = async () => {
+      setLoading(true);
+      const url = `/api/requests?limit=20${statusFilter ? `&status=${statusFilter}` : ""}`;
+      const r = await fetch(url);
+      const d = await r.json();
+      if (d.success) setRequests(d.data.requests);
+      setLoading(false);
+    };
+
     loadRequests();
     fetch("/api/pages").then(r => r.json()).then(d => {
       if (d.success) setPages(d.data.pages);
     });
   }, [statusFilter]);
-
-  const loadRequests = async () => {
-    setLoading(true);
-    const url = `/api/requests?limit=20${statusFilter ? `&status=${statusFilter}` : ""}`;
-    const r = await fetch(url);
-    const d = await r.json();
-    if (d.success) setRequests(d.data.requests);
-    setLoading(false);
-  };
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -196,7 +197,7 @@ export default function RequestsPage() {
             <h3 style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 700, marginBottom: "0.25rem" }}>{qrModal.title}</h3>
             <p style={{ fontSize: 12, color: "#64748b", marginBottom: "0.5rem" }}>SEP-0007 QR — auto-fills amount + memo in compatible wallets</p>
             <div className="badge badge-green" style={{ margin: "0 auto 1rem", display: "inline-flex" }}>${parseFloat(qrModal.amount).toFixed(2)} USDC</div>
-            <img src={qrDataUrl} alt="QR Code" style={{ width: 240, height: 240, margin: "0 auto", display: "block", borderRadius: 8 }} />
+            <Image src={qrDataUrl} alt="QR Code" width={240} height={240} style={{ margin: "0 auto", display: "block", borderRadius: 8 }} unoptimized />
             <div style={{ marginTop: "0.75rem", background: "#0d1424", borderRadius: 8, padding: "0.625rem" }}>
               <p style={{ fontSize: 11, color: "#64748b", marginBottom: 2 }}>Memo (include in your wallet app)</p>
               <p style={{ fontSize: 13, fontFamily: "JetBrains Mono, monospace", color: "#60a5fa" }}>{qrModal.memo}</p>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useParams } from "next/navigation";
 import { Loader2, CheckCircle, Copy, ExternalLink, Shield, Zap, AlertCircle, Clock } from "lucide-react";
 import QRCode from "qrcode";
@@ -254,7 +255,7 @@ export default function PayRequestPage() {
                 </p>
                 {qrDataUrl && (
                   <div style={{ display: "flex", justifyContent: "center", marginBottom: "1.25rem" }}>
-                    <img src={qrDataUrl} alt="SEP-0007 QR" style={{ width: 200, height: 200, borderRadius: 8 }} />
+                  <Image src={qrDataUrl} alt="SEP-0007 QR" width={200} height={200} style={{ borderRadius: 8 }} unoptimized />
                   </div>
                 )}
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.625rem", marginBottom: "1rem" }}>

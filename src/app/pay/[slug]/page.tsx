@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useParams } from "next/navigation";
-import { Loader2, CheckCircle, Copy, QrCode, ExternalLink, Shield, Zap, AlertCircle } from "lucide-react";
+import { Loader2, CheckCircle, Copy, ExternalLink, Shield, Zap, AlertCircle } from "lucide-react";
 import QRCode from "qrcode";
 import Link from "next/link";
 
@@ -253,7 +254,7 @@ export default function PayPage() {
 
               {addressQR && (
                 <div style={{ display: "flex", justifyContent: "center", marginBottom: "1.25rem" }}>
-                  <img src={addressQR} alt="Wallet QR" style={{ width: 180, height: 180, borderRadius: 8 }} />
+                  <Image src={addressQR} alt="Wallet QR" width={180} height={180} style={{ borderRadius: 8 }} unoptimized />
                 </div>
               )}
 

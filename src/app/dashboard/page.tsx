@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, ArrowDownLeft, TrendingUp, Link2, FileText, Send, Plus, ExternalLink } from "lucide-react";
+import { ArrowUpRight, ArrowDownLeft, TrendingUp, FileText, Send, Plus, ExternalLink } from "lucide-react";
 
 interface Stats {
   balance: string;

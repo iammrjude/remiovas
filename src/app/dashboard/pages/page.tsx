@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Plus, Link2, Copy, CheckCircle, ToggleLeft, ToggleRight, Trash2, QrCode, ExternalLink, Loader2 } from "lucide-react";
 import QRCode from "qrcode";
 
@@ -159,7 +160,7 @@ export default function PagesPage() {
           <div className="card" style={{ maxWidth: 360, textAlign: "center" }} onClick={e => e.stopPropagation()}>
             <h3 style={{ fontFamily: "Space Grotesk, sans-serif", fontWeight: 700, marginBottom: "0.25rem" }}>{qrModal.title}</h3>
             <p style={{ fontSize: 12, color: "#64748b", marginBottom: "1rem" }}>Scan to open payment page</p>
-            <img src={qrDataUrl} alt="QR Code" style={{ width: 240, height: 240, margin: "0 auto", display: "block", borderRadius: 8 }} />
+            <Image src={qrDataUrl} alt="QR Code" width={240} height={240} style={{ margin: "0 auto", display: "block", borderRadius: 8 }} unoptimized />
             <p style={{ fontSize: 11, color: "#64748b", marginTop: "0.75rem", wordBreak: "break-all" }}>{qrModal.url}</p>
             <div style={{ display: "flex", gap: "0.75rem", marginTop: "1.25rem" }}>
               <button className="btn-secondary" onClick={() => setQrModal(null)} style={{ flex: 1, justifyContent: "center", fontSize: 13 }}>Close</button>

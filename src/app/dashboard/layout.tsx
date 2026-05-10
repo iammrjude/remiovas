@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -16,11 +16,6 @@ interface AuthUser {
   walletActivated: boolean;
   walletPublicKey: string;
   usdcBalance: string;
-}
-
-interface Notification {
-  _id: string;
-  isRead: boolean;
 }
 
 function getInitials(name: string) {

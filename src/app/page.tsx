@@ -1,12 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, Zap, Shield, Globe, QrCode, CreditCard, CheckCircle } from "lucide-react";
 
 export default function HomePage() {
-  const [email, setEmail] = useState("");
-
   return (
     <div style={{ minHeight: "100vh", background: "#0a0f1e", color: "#f1f5f9" }}>
       {/* Nav */}

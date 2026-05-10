@@ -41,10 +41,10 @@ export const server = {
   async fetchAccount(accountId: string) {
     return getServer().loadAccount(accountId);
   },
-  async submitTransaction(transaction: any) {
+  async submitTransaction(transaction: StellarSdk.Transaction<StellarSdk.Memo, StellarSdk.Operation[]>) {
     return getServer().submitTransaction(transaction);
   },
-} as any;
+} as const;
 
 // Generate a new Stellar keypair and return encrypted secret
 export function generateWallet(): { publicKey: string; encryptedSecret: string } {
@@ -77,7 +77,7 @@ export async function fundWalletFriendbot(publicKey: string): Promise<boolean> {
 // Create USDC trustline for a wallet
 export async function createUSDCTrustline(encryptedSecret: string): Promise<string> {
   const keypair = getKeypairFromEncrypted(encryptedSecret);
-  const account = await server.loadAccount(keypair.publicKey());
+  const account = await server.fetchAccount(keypair.publicKey());
 
   const transaction = new StellarSdk.TransactionBuilder(account, {
     fee: StellarSdk.BASE_FEE,
@@ -100,10 +100,10 @@ export async function createUSDCTrustline(encryptedSecret: string): Promise<stri
 // Get USDC balance for an account
 export async function getUSDCBalance(publicKey: string): Promise<string> {
   try {
-    const account = await server.loadAccount(publicKey);
+    const account = await server.fetchAccount(publicKey);
     const usdcAsset = getUSDCAsset();
     const usdcBalance = account.balances.find(
-      (b) =>
+      (b: StellarSdk.Horizon.HorizonApi.BalanceLine | StellarSdk.Horizon.HorizonApi.BalanceLineAsset) =>
         b.asset_type === "credit_alphanum4" &&
         (b as StellarSdk.Horizon.HorizonApi.BalanceLineAsset).asset_code === usdcAsset.getCode() &&
         (b as StellarSdk.Horizon.HorizonApi.BalanceLineAsset).asset_issuer === usdcAsset.getIssuer()
@@ -123,7 +123,7 @@ export async function sendUSDCWithFee(params: {
 }): Promise<{ hash: string; netAmount: string; fee: string }> {
   const { fromEncryptedSecret, toPublicKey, amount, memo } = params;
   const keypair = getKeypairFromEncrypted(fromEncryptedSecret);
-  const account = await server.loadAccount(keypair.publicKey());
+  const account = await server.fetchAccount(keypair.publicKey());
 
   const amountNum = parseFloat(amount);
   const feeAmount = (amountNum * getPlatformFeePercent()).toFixed(7);
@@ -171,7 +171,7 @@ export async function forwardPaymentToCreator(params: {
   const { toPublicKey, amount, memo } = params;
   const intermediarySecret = process.env.PLATFORM_INTERMEDIARY_SECRET_KEY!;
   const keypair = StellarSdk.Keypair.fromSecret(intermediarySecret);
-  const account = await server.loadAccount(keypair.publicKey());
+  const account = await server.fetchAccount(keypair.publicKey());
 
   const amountNum = parseFloat(amount);
   const feeAmount = (amountNum * getPlatformFeePercent()).toFixed(7);
@@ -215,7 +215,7 @@ export async function refundPayment(params: {
   const { toPublicKey, amount, memo } = params;
   const intermediarySecret = process.env.PLATFORM_INTERMEDIARY_SECRET_KEY!;
   const keypair = StellarSdk.Keypair.fromSecret(intermediarySecret);
-  const account = await server.loadAccount(keypair.publicKey());
+  const account = await server.fetchAccount(keypair.publicKey());
 
   const transaction = new StellarSdk.TransactionBuilder(account, {
     fee: StellarSdk.BASE_FEE,

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Copy, Send, QrCode, ExternalLink, Loader2, CheckCircle, ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import QRCode from "qrcode";
 
@@ -97,7 +98,6 @@ export default function WalletPage() {
   };
 
   const typeColor = (type: string) => ["receive", "deposit"].includes(type) ? "#10b981" : "#f87171";
-  const typeLabel = (type: string) => ({ send: "Sent", receive: "Received", deposit: "Deposited", withdraw: "Withdrawn", fee: "Fee", refund: "Refunded" }[type] || type);
 
   if (loading) return <div style={{ padding: "2rem" }}><div className="shimmer" style={{ height: 200, borderRadius: 12 }} /></div>;
 
@@ -127,7 +127,7 @@ export default function WalletPage() {
 
           {showQR && qrDataUrl && (
             <div style={{ marginTop: "1rem", display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.5rem" }}>
-              <img src={qrDataUrl} alt="Wallet QR" style={{ borderRadius: 8, width: 160, height: 160 }} />
+              <Image src={qrDataUrl} alt="Wallet QR" width={160} height={160} style={{ borderRadius: 8 }} unoptimized />
               <p style={{ fontSize: 12, color: "#64748b" }}>Scan this QR to auto-fill your wallet address</p>
             </div>
           )}

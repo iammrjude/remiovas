@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Loader2, CheckCircle, Copy, QrCode } from "lucide-react";
+import Image from "next/image";
 import QRCode from "qrcode";
 
 interface UserProfile {
@@ -181,7 +183,7 @@ export default function ProfilePage() {
             </div>
             {showQR && qrDataUrl && (
               <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "0.75rem" }}>
-                <img src={qrDataUrl} alt="Receive QR" style={{ width: 180, height: 180, borderRadius: 8 }} />
+                <Image src={qrDataUrl} alt="Receive QR" width={180} height={180} style={{ borderRadius: 8 }} unoptimized />
                 <button className="btn-secondary" onClick={downloadQR} style={{ fontSize: 13, padding: "0.5rem 0.875rem" }}>Download PNG</button>
               </div>
             )}

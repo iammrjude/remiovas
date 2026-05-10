@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { connectDB } from "@/lib/db";
 import PaymentPage from "@/models/PaymentPage";
 import { getAuthUser } from "@/lib/auth";
-import { ok, badRequest, unauthorized, notFound, serverError, forbidden } from "@/lib/response";
+import { ok, badRequest, unauthorized, notFound, serverError } from "@/lib/response";
 import { z } from "zod";
 
 const updateSchema = z.object({
