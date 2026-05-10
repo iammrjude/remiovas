@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Loader2, CheckCircle, Copy, QrCode } from "lucide-react";
-import Image from "next/image";
 import QRCode from "qrcode";
 
 interface UserProfile {
