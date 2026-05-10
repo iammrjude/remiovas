@@ -1,0 +1,63 @@
+name: Bug report
+description: Report a reproducible bug in Remiovas
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting this issue.
+        Please include enough detail so someone else can reproduce it quickly.
+  - type: textarea
+    id: context
+    attributes:
+      label: Project context
+      description: What feature or flow is this bug related to?
+      placeholder: This affects...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should happen?
+      placeholder: When I do X, I expect Y.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happened instead?
+      placeholder: Instead, I saw...
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Provide clear ordered steps.
+      placeholder: |
+        1. Go to ...
+        2. Click ...
+        3. Observe ...
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, browser, Node version, and any other relevant details.
+      placeholder: Windows 11, Chrome 136, Node 22.x
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmation
+      options:
+        - label: I checked for duplicate issues before opening this report.
+          required: true
+        - label: I included enough details for maintainers to reproduce this.
+          required: true

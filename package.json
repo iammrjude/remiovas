@@ -7,8 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "lint:md": "npx markdownlint-cli2 README.md CONTRIBUTING.md CODE_OF_CONDUCT.md SECURITY.md"
+    "lint": "eslint .",
+    "lint:md": "npx markdownlint-cli2 \"README.md\" \"CONTRIBUTING.md\" \"CODE_OF_CONDUCT.md\" \"SECURITY.md\" \".github/**/*.md\""
   },
   "dependencies": {
     "@stellar/stellar-sdk": "^15.1.0",
@@ -32,7 +32,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "autoprefixer": "^10.5.0",
-    "eslint": "^10.3.0",
+    "eslint": "^9.39.4",
     "eslint-config-next": "16.2.6",
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3"

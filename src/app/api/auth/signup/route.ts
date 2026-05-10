@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     const parsed = signupSchema.safeParse({ ...body, username: body.username?.toLowerCase() });
 
     if (!parsed.success) {
-      return badRequest(parsed.error.errors[0].message);
+      return badRequest(parsed.error.issues[0].message);
     }
 
     const { email, password, username, displayName } = parsed.data;

@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     const parsed = createSchema.safeParse(body);
-    if (!parsed.success) return badRequest(parsed.error.errors[0].message);
+    if (!parsed.success) return badRequest(parsed.error.issues[0].message);
 
     const { pageId, title, description, expectedAmount, expiryHours } = parsed.data;
     const amountNum = parseFloat(expectedAmount);

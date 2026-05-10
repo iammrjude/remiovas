@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const parsed = schema.safeParse(body);
-    if (!parsed.success) return badRequest(parsed.error.errors[0].message);
+    if (!parsed.success) return badRequest(parsed.error.issues[0].message);
 
     const { token, password } = parsed.data;
     const hashedToken = hashToken(token);

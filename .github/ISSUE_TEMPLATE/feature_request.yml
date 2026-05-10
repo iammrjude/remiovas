@@ -1,0 +1,47 @@
+name: Feature request
+description: Propose a new feature or improvement for Remiovas
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What user problem are you trying to solve?
+      placeholder: Users currently cannot...
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe your suggested solution.
+      placeholder: I propose...
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and impact
+      description: Which pages, APIs, or components would be affected?
+      placeholder: This would affect...
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: List alternatives you considered and why you prefer this one.
+      placeholder: Another approach is...
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Confirmation
+      options:
+        - label: I reviewed existing issues and discussions for duplicates.
+          required: true
+        - label: I explained the user value and expected outcome clearly.
+          required: true

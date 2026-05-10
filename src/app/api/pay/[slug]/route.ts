@@ -49,7 +49,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ slu
       memo: z.string().max(28).optional(),
     });
     const parsed = schema.safeParse(body);
-    if (!parsed.success) return badRequest(parsed.error.errors[0].message);
+    if (!parsed.success) return badRequest(parsed.error.issues[0].message);
 
     const { amount, memo } = parsed.data;
     const amountNum = parseFloat(amount);

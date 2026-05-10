@@ -56,7 +56,7 @@ const UserSchema = new Schema<IUser>(
   {
     timestamps: true,
     toJSON: {
-      transform(_, ret) {
+      transform(_, ret: Partial<IUser>) {
         delete ret.passwordHash;
         delete ret.walletEncryptedSecret;
         delete ret.emailVerificationToken;

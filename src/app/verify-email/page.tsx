@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle, XCircle, Loader2 } from "lucide-react";
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
@@ -32,5 +32,13 @@ export default function VerifyEmailPage() {
         {status === "error" && <><XCircle size={48} color="#ef4444" style={{ margin: "0 auto 1rem" }} /><h2 style={{ fontFamily: "Space Grotesk, sans-serif", fontSize: "1.25rem", fontWeight: 700, marginBottom: "0.75rem" }}>Verification Failed</h2><p style={{ color: "#94a3b8", marginBottom: "1.5rem" }}>{message}</p><Link href="/login" className="btn-secondary" style={{ display: "inline-flex" }}>Back to Login</Link></>}
       </div>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={<div style={{ minHeight: "100vh", background: "#0a0f1e" }} />}>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }

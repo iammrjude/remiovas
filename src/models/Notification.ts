@@ -43,7 +43,7 @@ const NotificationSchema = new Schema<INotification>(
     isRead: { type: Boolean, default: false },
     metadata: { type: Map, of: String, default: {} },
   },
-  { timestamps: true, updatedAt: false }
+  { timestamps: { createdAt: true, updatedAt: false } }
 );
 
 NotificationSchema.index({ userId: 1, createdAt: -1 });
