@@ -1,25 +1,31 @@
 import nodemailer from "nodemailer";
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
-  },
-});
+function getTransporter() {
+  return nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASSWORD,
+    },
+  });
+}
 
-const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME || "Remiovas";
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-const FROM = `${APP_NAME} <${process.env.GMAIL_USER}>`;
+function getEmailConfig() {
+  const appName = process.env.NEXT_PUBLIC_APP_NAME || "Remiovas";
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const from = `${appName} <${process.env.GMAIL_USER}>`;
+  return { appName, appUrl, from };
+}
 
 function baseTemplate(content: string): string {
+  const { appName } = getEmailConfig();
   return `
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${APP_NAME}</title>
+  <title>${appName}</title>
 </head>
 <body style="margin:0;padding:0;background:#0a0f1e;font-family:'DM Sans',Arial,sans-serif;">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0f1e;min-height:100vh;padding:40px 20px;">
@@ -28,7 +34,7 @@ function baseTemplate(content: string): string {
         <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
           <tr>
             <td style="padding-bottom:32px;text-align:center;">
-              <span style="font-size:24px;font-weight:800;color:#0070f3;letter-spacing:-0.5px;">${APP_NAME}</span>
+              <span style="font-size:24px;font-weight:800;color:#0070f3;letter-spacing:-0.5px;">${appName}</span>
             </td>
           </tr>
           <tr>
@@ -39,7 +45,7 @@ function baseTemplate(content: string): string {
           <tr>
             <td style="padding-top:24px;text-align:center;">
               <p style="color:#4b5563;font-size:12px;margin:0;">
-                © ${new Date().getFullYear()} ${APP_NAME}. Built on Stellar.
+                © ${new Date().getFullYear()} ${appName}. Built on Stellar.
               </p>
             </td>
           </tr>
@@ -57,15 +63,16 @@ export async function sendVerificationEmail(params: {
   token: string;
 }): Promise<void> {
   const { to, name, token } = params;
-  const verifyUrl = `${APP_URL}/verify-email?token=${token}`;
+  const { appUrl, appName, from } = getEmailConfig();
+  const verifyUrl = `${appUrl}/verify-email?token=${token}`;
 
-  await transporter.sendMail({
-    from: FROM,
+  await getTransporter().sendMail({
+    from,
     to,
-    subject: `Verify your ${APP_NAME} account`,
+    subject: `Verify your ${appName} account`,
     html: baseTemplate(`
       <h1 style="color:#f1f5f9;font-size:24px;font-weight:700;margin:0 0 8px;">Verify your email</h1>
-      <p style="color:#94a3b8;font-size:16px;margin:0 0 32px;">Hi ${name}, welcome to ${APP_NAME}!</p>
+      <p style="color:#94a3b8;font-size:16px;margin:0 0 32px;">Hi ${name}, welcome to ${appName}!</p>
       <p style="color:#cbd5e1;font-size:15px;line-height:1.6;margin:0 0 32px;">
         Click the button below to verify your email address and activate your wallet. This link expires in 24 hours.
       </p>
@@ -87,12 +94,13 @@ export async function sendPasswordResetEmail(params: {
   token: string;
 }): Promise<void> {
   const { to, name, token } = params;
-  const resetUrl = `${APP_URL}/reset-password?token=${token}`;
+  const { appUrl, appName, from } = getEmailConfig();
+  const resetUrl = `${appUrl}/reset-password?token=${token}`;
 
-  await transporter.sendMail({
-    from: FROM,
+  await getTransporter().sendMail({
+    from,
     to,
-    subject: `Reset your ${APP_NAME} password`,
+    subject: `Reset your ${appName} password`,
     html: baseTemplate(`
       <h1 style="color:#f1f5f9;font-size:24px;font-weight:700;margin:0 0 8px;">Reset your password</h1>
       <p style="color:#94a3b8;font-size:16px;margin:0 0 32px;">Hi ${name},</p>
@@ -120,12 +128,13 @@ export async function sendPaymentReceivedEmail(params: {
   txHash: string;
 }): Promise<void> {
   const { to, name, amount, from, memo, txHash } = params;
+  const { appName, from: emailFrom } = getEmailConfig();
   const explorerUrl = `https://stellar.expert/explorer/testnet/tx/${txHash}`;
 
-  await transporter.sendMail({
-    from: FROM,
+  await getTransporter().sendMail({
+    from: emailFrom,
     to,
-    subject: `You received $${amount} USDC on ${APP_NAME}`,
+    subject: `You received $${amount} USDC on ${appName}`,
     html: baseTemplate(`
       <h1 style="color:#10b981;font-size:24px;font-weight:700;margin:0 0 8px;">Payment Received!</h1>
       <p style="color:#94a3b8;font-size:16px;margin:0 0 32px;">Hi ${name},</p>

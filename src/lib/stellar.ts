@@ -1,24 +1,50 @@
 import * as StellarSdk from "@stellar/stellar-sdk";
 import { encrypt, decrypt } from "./encryption";
 
-const NETWORK = process.env.STELLAR_NETWORK === "mainnet" ? "mainnet" : "testnet";
-const HORIZON_URL = process.env.STELLAR_HORIZON_URL || "https://horizon-testnet.stellar.org";
-const FRIENDBOT_URL = process.env.STELLAR_FRIENDBOT_URL || "https://friendbot.stellar.org";
+function getConfig() {
+  const network = process.env.STELLAR_NETWORK === "mainnet" ? "mainnet" : "testnet";
+  const horizonUrl = process.env.STELLAR_HORIZON_URL || "https://horizon-testnet.stellar.org";
+  const friendbotUrl = process.env.STELLAR_FRIENDBOT_URL || "https://friendbot.stellar.org";
 
-export const server = new StellarSdk.Horizon.Server(HORIZON_URL);
+  return { network, horizonUrl, friendbotUrl };
+}
 
-export const NETWORK_PASSPHRASE =
-  NETWORK === "mainnet"
+function getServer(): StellarSdk.Horizon.Server {
+  const { horizonUrl } = getConfig();
+  return new StellarSdk.Horizon.Server(horizonUrl);
+}
+
+export function getNetworkPassphrase(): string {
+  const { network } = getConfig();
+  return network === "mainnet"
     ? StellarSdk.Networks.PUBLIC
     : StellarSdk.Networks.TESTNET;
+}
 
-export const USDC_ASSET = new StellarSdk.Asset(
-  process.env.USDC_ASSET_CODE || "USDC",
-  process.env.USDC_ASSET_ISSUER || "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5"
-);
+export function getUSDCAsset(): StellarSdk.Asset {
+  return new StellarSdk.Asset(
+    process.env.USDC_ASSET_CODE || "USDC",
+    process.env.USDC_ASSET_ISSUER || "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5"
+  );
+}
 
-export const PLATFORM_FEE_PERCENT = parseFloat(process.env.PLATFORM_FEE_PERCENT || "0.005");
-export const MIN_TRANSACTION_USD = parseFloat(process.env.MIN_TRANSACTION_USD || "1");
+export function getPlatformFeePercent(): number {
+  return parseFloat(process.env.PLATFORM_FEE_PERCENT || "0.005");
+}
+
+export function getMinTransactionUSD(): number {
+  return parseFloat(process.env.MIN_TRANSACTION_USD || "1");
+}
+
+// For backward compatibility, keep these as getters
+export const server = {
+  async fetchAccount(accountId: string) {
+    return getServer().loadAccount(accountId);
+  },
+  async submitTransaction(transaction: any) {
+    return getServer().submitTransaction(transaction);
+  },
+} as any;
 
 // Generate a new Stellar keypair and return encrypted secret
 export function generateWallet(): { publicKey: string; encryptedSecret: string } {
@@ -36,11 +62,12 @@ export function getKeypairFromEncrypted(encryptedSecret: string): StellarSdk.Key
 
 // Fund wallet via Friendbot (testnet only)
 export async function fundWalletFriendbot(publicKey: string): Promise<boolean> {
-  if (NETWORK === "mainnet") {
+  const { network, friendbotUrl } = getConfig();
+  if (network === "mainnet") {
     throw new Error("Friendbot not available on mainnet. Use treasury wallet.");
   }
   try {
-    const response = await fetch(`${FRIENDBOT_URL}?addr=${publicKey}`);
+    const response = await fetch(`${friendbotUrl}?addr=${publicKey}`);
     return response.ok;
   } catch {
     return false;
@@ -54,11 +81,11 @@ export async function createUSDCTrustline(encryptedSecret: string): Promise<stri
 
   const transaction = new StellarSdk.TransactionBuilder(account, {
     fee: StellarSdk.BASE_FEE,
-    networkPassphrase: NETWORK_PASSPHRASE,
+    networkPassphrase: getNetworkPassphrase(),
   })
     .addOperation(
       StellarSdk.Operation.changeTrust({
-        asset: USDC_ASSET,
+        asset: getUSDCAsset(),
         limit: "1000000000",
       })
     )
@@ -74,11 +101,12 @@ export async function createUSDCTrustline(encryptedSecret: string): Promise<stri
 export async function getUSDCBalance(publicKey: string): Promise<string> {
   try {
     const account = await server.loadAccount(publicKey);
+    const usdcAsset = getUSDCAsset();
     const usdcBalance = account.balances.find(
       (b) =>
         b.asset_type === "credit_alphanum4" &&
-        (b as StellarSdk.Horizon.HorizonApi.BalanceLineAsset).asset_code === USDC_ASSET.getCode() &&
-        (b as StellarSdk.Horizon.HorizonApi.BalanceLineAsset).asset_issuer === USDC_ASSET.getIssuer()
+        (b as StellarSdk.Horizon.HorizonApi.BalanceLineAsset).asset_code === usdcAsset.getCode() &&
+        (b as StellarSdk.Horizon.HorizonApi.BalanceLineAsset).asset_issuer === usdcAsset.getIssuer()
     );
     return usdcBalance ? usdcBalance.balance : "0";
   } catch {
@@ -98,26 +126,27 @@ export async function sendUSDCWithFee(params: {
   const account = await server.loadAccount(keypair.publicKey());
 
   const amountNum = parseFloat(amount);
-  const feeAmount = (amountNum * PLATFORM_FEE_PERCENT).toFixed(7);
+  const feeAmount = (amountNum * getPlatformFeePercent()).toFixed(7);
   const netAmount = (amountNum - parseFloat(feeAmount)).toFixed(7);
 
   const feePublicKey = process.env.PLATFORM_FEE_PUBLIC_KEY!;
+  const usdcAsset = getUSDCAsset();
 
   const txBuilder = new StellarSdk.TransactionBuilder(account, {
     fee: (parseInt(StellarSdk.BASE_FEE) * 2).toString(),
-    networkPassphrase: NETWORK_PASSPHRASE,
+    networkPassphrase: getNetworkPassphrase(),
   })
     .addOperation(
       StellarSdk.Operation.payment({
         destination: toPublicKey,
-        asset: USDC_ASSET,
+        asset: usdcAsset,
         amount: netAmount,
       })
     )
     .addOperation(
       StellarSdk.Operation.payment({
         destination: feePublicKey,
-        asset: USDC_ASSET,
+        asset: usdcAsset,
         amount: feeAmount,
       })
     );
@@ -145,25 +174,26 @@ export async function forwardPaymentToCreator(params: {
   const account = await server.loadAccount(keypair.publicKey());
 
   const amountNum = parseFloat(amount);
-  const feeAmount = (amountNum * PLATFORM_FEE_PERCENT).toFixed(7);
+  const feeAmount = (amountNum * getPlatformFeePercent()).toFixed(7);
   const netAmount = (amountNum - parseFloat(feeAmount)).toFixed(7);
   const feePublicKey = process.env.PLATFORM_FEE_PUBLIC_KEY!;
+  const usdcAsset = getUSDCAsset();
 
   const transaction = new StellarSdk.TransactionBuilder(account, {
     fee: (parseInt(StellarSdk.BASE_FEE) * 2).toString(),
-    networkPassphrase: NETWORK_PASSPHRASE,
+    networkPassphrase: getNetworkPassphrase(),
   })
     .addOperation(
       StellarSdk.Operation.payment({
         destination: toPublicKey,
-        asset: USDC_ASSET,
+        asset: usdcAsset,
         amount: netAmount,
       })
     )
     .addOperation(
       StellarSdk.Operation.payment({
         destination: feePublicKey,
-        asset: USDC_ASSET,
+        asset: usdcAsset,
         amount: feeAmount,
       })
     )
@@ -189,12 +219,12 @@ export async function refundPayment(params: {
 
   const transaction = new StellarSdk.TransactionBuilder(account, {
     fee: StellarSdk.BASE_FEE,
-    networkPassphrase: NETWORK_PASSPHRASE,
+    networkPassphrase: getNetworkPassphrase(),
   })
     .addOperation(
       StellarSdk.Operation.payment({
         destination: toPublicKey,
-        asset: USDC_ASSET,
+        asset: getUSDCAsset(),
         amount: amount,
       })
     )
