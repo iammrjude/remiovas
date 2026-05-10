@@ -56,6 +56,23 @@ export default function RequestsPage() {
   const [qrDataUrl, setQrDataUrl] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
+  const loadRequests = async () => {
+    setLoading(true);
+
+    try {
+      const url = `/api/requests?limit=20${statusFilter ? `&status=${statusFilter}` : ""}`;
+
+      const r = await fetch(url);
+      const d = await r.json();
+
+      if (d.success) {
+        setRequests(d.data.requests);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const loadRequests = async () => {
       setLoading(true);

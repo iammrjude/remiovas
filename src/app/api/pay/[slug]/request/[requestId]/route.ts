@@ -6,7 +6,7 @@ import User from "@/models/User";
 import Transaction from "@/models/Transaction";
 import Notification from "@/models/Notification";
 import { getAuthUser } from "@/lib/auth";
-import { getUSDCBalance, sendUSDCWithFee, generateSEP0007URI, USDC_ASSET } from "@/lib/stellar";
+import { getUSDCBalance, sendUSDCWithFee, generateSEP0007URI, getUSDCAsset } from "@/lib/stellar";
 import { ok, badRequest, notFound, serverError, unauthorized, forbidden } from "@/lib/response";
 import { z } from "zod";
 
@@ -36,8 +36,8 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ slu
     const sep0007URI = generateSEP0007URI({
       destination: intermediaryKey,
       amount: request.expectedAmount,
-      assetCode: USDC_ASSET.getCode(),
-      assetIssuer: USDC_ASSET.getIssuer(),
+      assetCode: getUSDCAsset().getCode(),
+      assetIssuer: getUSDCAsset().getIssuer(),
       memo: request.memo,
       memoType: "text",
     });

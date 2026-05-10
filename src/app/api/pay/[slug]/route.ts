@@ -5,7 +5,7 @@ import User from "@/models/User";
 import Transaction from "@/models/Transaction";
 import Notification from "@/models/Notification";
 import { getAuthUser } from "@/lib/auth";
-import { getUSDCBalance, sendUSDCWithFee, generateSEP0007URI, USDC_ASSET } from "@/lib/stellar";
+import { getUSDCBalance, sendUSDCWithFee, generateSEP0007URI, getUSDCAsset } from "@/lib/stellar";
 import { ok, badRequest, notFound, serverError, unauthorized, forbidden } from "@/lib/response";
 import { z } from "zod";
 
@@ -24,8 +24,8 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ slu
     // Generate SEP-0007 URI for the page's wallet address
     const sep0007URI = generateSEP0007URI({
       destination: process.env.PLATFORM_INTERMEDIARY_PUBLIC_KEY!,
-      assetCode: USDC_ASSET.getCode(),
-      assetIssuer: USDC_ASSET.getIssuer(),
+      assetCode: getUSDCAsset().getCode(),
+      assetIssuer: getUSDCAsset().getIssuer(),
     });
 
     return ok({ page, owner, sep0007URI });
