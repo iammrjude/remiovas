@@ -1,0 +1,7 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Favicon background -->
+  <rect width="200" height="200" fill="#0052CC" rx="40"/>
+  
+  <!-- Star -->
+  <path d="M 100 40 L 115 85 L 165 85 L 125 120 L 140 165 L 100 130 L 60 165 L 75 120 L 35 85 L 85 85 Z" fill="#00D9FF" stroke="#FFFFFF" stroke-width="2"/>
+</svg>

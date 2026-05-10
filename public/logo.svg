@@ -1,0 +1,25 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="95" fill="#0052CC" opacity="0.1"/>
+  
+  <!-- Main star (represents Stellar) -->
+  <path d="M 100 20 L 120 70 L 172 70 L 132 105 L 152 155 L 100 120 L 48 155 L 68 105 L 28 70 L 80 70 Z" fill="#0052CC" stroke="#0052CC" stroke-width="1"/>
+  
+  <!-- Payment arrows (circular flow) -->
+  <g opacity="0.8">
+    <!-- Top right arrow -->
+    <path d="M 140 60 L 155 50 L 150 65" fill="none" stroke="#00D9FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Bottom right arrow -->
+    <path d="M 155 140 L 145 165 L 140 150" fill="none" stroke="#00D9FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Bottom left arrow -->
+    <path d="M 45 165 L 55 140 L 60 155" fill="none" stroke="#00D9FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Top left arrow -->
+    <path d="M 50 50 L 45 65 L 60 60" fill="none" stroke="#00D9FF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  
+  <!-- Center circle accent -->
+  <circle cx="100" cy="100" r="12" fill="#00D9FF" opacity="0.6"/>
+</svg>

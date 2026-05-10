@@ -10,6 +10,18 @@ export const metadata: Metadata = {
   description: "Create a shareable payment page on Stellar in 30 seconds. Accept USDC from anyone, anywhere.",
   manifest: "/manifest.webmanifest",
   keywords: ["stellar", "payments", "usdc", "crypto", "payment link", "paylink"],
+  icons: [
+    {
+      rel: "icon",
+      url: "/favicon.svg",
+      type: "image/svg+xml",
+    },
+    {
+      rel: "apple-touch-icon",
+      url: "/logo.svg",
+      type: "image/svg+xml",
+    },
+  ],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
